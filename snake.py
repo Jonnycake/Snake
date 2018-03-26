@@ -103,18 +103,22 @@ class SnakePart(Coordinate):
 		if not is_head and tail is None:
 			raise ValueError("A non-head part of the snake was initialized and no tail was provided!")
 
-		# Game must be provided so we know how to wrap our coordinates
-		if game is None:
+		# Game must be provided so we know how to wrap our coordinates (and for finding the center)
+		if game is None or game.__class__.__name__ != "Game":
 			raise ValueError("A game must be provided to SnakePart!")
--		self.game = game
+		self.game = game
 
 		# If it's the head we can set the position to a random location
 		if is_head:
-			# We need a screen object to find min and max
-			#if screen is None or screen.__class__.__name__ != "Screen":
-			#	raise ValueError("A valid screen object was not passed when initializing the head!")
-			self.x = random.randint(0, self.game.screen.MAX_X - 1)
-			self.y = random.randint(0, self.game.screen.MAX_Y - 1)
+			# Divide MAX_X by 2 and add 1 to get the 2 char center
+			# @note The reason we want 2-char center is because we start with length 2
+			# @note If the screen has an odd width/height, this will not be the true center
+			self.x = ((self.game.screen.MAX_X - 1) / 2) + 1
+
+			# Do the same for Y
+			self.y = ((self.game.screen.MAX_Y - 1) / 2) + 1
+
+			# Start out facing right
 			self.direction = "r"
 
 		# Otherwise we should follow the tail
@@ -483,7 +487,7 @@ class Game:
 		# If it's p, pause
 		elif key.lower() == "p":
 			# Let the user know the game is paused
-			# @noet This should be handled in Screen
+			# @note This should be handled in Screen
 			self.screen.window.addstr(0, 0, "Paused")
 
 			# Until they  hit the pause button again, do nothing
