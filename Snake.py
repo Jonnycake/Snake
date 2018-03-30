@@ -1,4 +1,5 @@
 from Movable import CursesMovable
+import time
 
 class CursesSnakePart(CursesMovable):
 	def __init__(self, game = None, is_head = False, head = None):
@@ -51,5 +52,5 @@ class CursesSnake(CursesMovable):
 		for piece in self.pieces:
 			# We tell the pieces to move, this way we can
 			# ensure the order of movement
-			self.game.screen.addObj(piece, False)
+			self.game.screen.addObj(piece, move = False)
 		CursesMovable.added(self, uuid)

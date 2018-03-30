@@ -30,11 +30,13 @@ class SnakeGame(Game):
 		# Call superclass Init
 		Game.__init__(self)
 
+
+	def _addSnake(self):
 		# Create the snake
 		self.snake = CursesSnake(game = self)
 
 		# Add our snake to the screen
-		self.screen.addObj(self.snake)
+		self.screen.addObj(self.snake, render = False)
 
 	# Keyboard Input Callback
 	def keyHandler(self, key):
@@ -85,6 +87,7 @@ class SnakeGame(Game):
 
 	# Play the game (handle keyboard input and food)
 	def play(self):
+		self._addSnake()
 		to_continue = True
 		while to_continue:
 			to_continue = Game.frame(self)

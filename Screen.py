@@ -91,9 +91,13 @@ class CursesScreen:
 		to_continue = self.keyHandler(key)
 
 		# Move any movable objects
-		for object in self._objects:
-			if object['move'] and isinstance(object, CursesMovable):
-				object['object'].move()
+		for _uuid in self._objects:
+			object = self._objects[_uuid]
+			if object.has_key('move') and object.has_key('object'):
+				if object['move']:# and isinstance(object, CursesMovable):
+					object['object'].move()
+			else:
+				raise Exception("Duhhh wtf?")
 
 		# If we should continue
 		if to_continue:
@@ -103,29 +107,34 @@ class CursesScreen:
 		# Pass on whether or not to continue
 		return to_continue
 
-	def addObj(self, renderable, move = True):
+	def addObj(self, renderable, move = True, render = True):
 		# Generate a new uuid
 		new_uuid = str(uuid.uuid1())
 
 		# Let everything else know there's a new renderable
-		for object in self._objects:
-			object.renderable_added(renderable)
+		for _uuid in self._objects:
+			if self._objects[_uuid].has_key('object'):
+				object = self._objects[_uuid]['object']
+				object.renderable_added(renderable)
 
-			# Let the renderable know about everything else too
-			renderable.renderable_added(object)
+				# Let the renderable know about everything else too
+				renderable.renderable_added(object)
 
 
 		# Add to our list of objects
-		self._objects[new_uuid] = { "object": object, "move": move }
+		self._objects[new_uuid] = { "object": renderable, "move": move, "render": render }
 
 		# Finally let the renderable know it was added
 		renderable.added(new_uuid)
 
+		return new_uuid
 	def draw(self, scr):
 		self._window.clear()
 
-		for renderable in self._objects:
-			self._window.addch(renderable.y, renderable.x, renderable.character)
-
+		for _uuid in self._objects:
+			# @note Maybe  we should just make these keys a part of the renderable class...
+			if self._objects[_uuid].has_key('object') and self._objects[_uuid].has_key('render') and self._objects[_uuid]['render']:
+				object = self._objects[_uuid]['object']
+				self._window.addch(object.y, object.x, object.character)
 		# Clear then refresh the screen
 		self._window.refresh()
