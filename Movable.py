@@ -17,6 +17,11 @@ class CursesMovable(CursesRenderable):
 	# The previous position
 	old_position = None
 
+	# Opposite directions
+	opposites = {"u": "d", "l": "r", "r": "l", "d": "u"}
+
+	# Allow 180 degree turns?
+	allow_180 = False
 	# Follow another part
 	def follow(self, target):
 		# We just set following to target
@@ -79,11 +84,16 @@ class CursesMovable(CursesRenderable):
 		# Set the old direction
 		self.old_direction = self.direction
 
+		self.check_collision()
+
 	def check_collision(self):
-		for renderable in self.collision_list:
-			if renderable.touching(self):
-				renderable.collide()
+		collisions = self.touching(self.collision_list)
+		for renderable in collisions:
+			renderable.collide()
 
 	def turn(self, direction):
-		self.old_direction = self.direction
-		self.direction = direction
+		if not self.allow_180 and self.opposites[self.direction] == direction:
+			return
+		elif self.opposites.has_key(direction):
+			self.old_direction = self.direction
+			self.direction = direction

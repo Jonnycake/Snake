@@ -1,5 +1,7 @@
 import curses
 import uuid
+import time
+import copy
 from Movable import CursesMovable
 
 class CursesScreen:
@@ -91,11 +93,13 @@ class CursesScreen:
 		to_continue = self.keyHandler(key)
 
 		# Move any movable objects
-		for _uuid in self._objects:
+		objects = copy.copy(self._objects)
+		for _uuid in objects:
 			object = self._objects[_uuid]
 			if object.has_key('move') and object.has_key('object'):
-				if object['move']:# and isinstance(object, CursesMovable):
+				if object['move'] and isinstance(object['object'], CursesMovable):
 					object['object'].move()
+					object['object'].check_collision()
 			else:
 				raise Exception("Duhhh wtf?")
 
@@ -112,7 +116,8 @@ class CursesScreen:
 		new_uuid = str(uuid.uuid1())
 
 		# Let everything else know there's a new renderable
-		for _uuid in self._objects:
+		objects = copy.copy(self._objects)
+		for _uuid in objects:
 			if self._objects[_uuid].has_key('object'):
 				object = self._objects[_uuid]['object']
 				object.renderable_added(renderable)
@@ -138,3 +143,12 @@ class CursesScreen:
 				self._window.addch(object.y, object.x, object.character)
 		# Clear then refresh the screen
 		self._window.refresh()
+
+	def print_debug(self):
+		y = 0
+		self._window.clear()
+		for object in self._objects:
+			self._window.addstr(y, 0, str(self._objects[object]['object'].debug()))
+			y += 1
+		self._window.refresh()
+		time.sleep(10)

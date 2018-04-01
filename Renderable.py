@@ -1,4 +1,5 @@
 from Coordinate import Coordinate
+import random
 
 # CursesRenderable class
 class CursesRenderable(Coordinate):
@@ -32,7 +33,7 @@ class CursesRenderable(Coordinate):
 		self.collision_callback = collision_callback
 
 		# Add us to the screen
-		game.screen.addObj(self)
+		game.screen.addObj(self, move = False)
 
 	def renderable_added(self, renderable):
 		self.collision_list.append(renderable)
@@ -42,4 +43,22 @@ class CursesRenderable(Coordinate):
 		return uuid
 
 	def collide(self):
-		self.collision_callback(self)
+		pass
+		#self.collision_callback(self)
+
+	def debug(self):
+		collision_info = []
+		for collidable in self.collision_list:
+			collision_info.append(str(collidable))
+		output = "%s: %s - %s" % (self.__class__, self.uuid, ",".join(collision_info))
+		return output
+
+	def __str__(self):
+		x = -1
+		y = -1
+		if self.x is not None:
+			x = self.x
+		if self.y is not None:
+			y = self.y
+
+		return "%s(%d, %d)" % (self.uuid, x, y)

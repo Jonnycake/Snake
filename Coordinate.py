@@ -15,12 +15,12 @@ class Coordinate(object):
 
 	# Check if there's any object at the same (x, y, z) as us
 	def touching(self, collision_list):
+		collisions = []
 		# coordinate_list is an array of Coordinates
 		for coordinate in collision_list:
 			# If our coordinates are the same, we are touching
-			if coordinate.x == self.x and coordinate.y == self.y and coordinate.z == self.z:
+			if coordinate.x == self.x and coordinate.y == self.y and coordinate.z == self.z and coordinate is not self:
 				# Return the object we're touching
-				return coordinate
+				collisions.append(coordinate)
 
-		# Otherwise return false
-		return False
+		return collisions

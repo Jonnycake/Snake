@@ -54,3 +54,7 @@ class CursesSnake(CursesMovable):
 			# ensure the order of movement
 			self.game.screen.addObj(piece, move = False)
 		CursesMovable.added(self, uuid)
+
+	def grow(self):
+		# Follow the tail
+		self.pieces.append(CursesSnakePart(game = self.game, is_head = False, head = self.pieces[-1]))

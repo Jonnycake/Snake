@@ -9,8 +9,8 @@ class Food(CursesRenderable):
 		# We neeed the snake in our list
 		#self.collision_list += game.snake.body + [game.snake.head] + [game.snake.tail]
 
-		# We need to make sure we don't go on top of a piece of food
-		self.collision_list += game.food_list
-
 		# Call the renderable constructor
 		CursesRenderable.__init__(self, game = game, collision_callback = collision_callback)
+
+	def collide(self):
+		self.game.eat(self)

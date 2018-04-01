@@ -1,5 +1,6 @@
 from Game import Game
 from Snake import CursesSnake
+from Food import Food
 import time
 
 # The Game...you just lost it
@@ -67,14 +68,18 @@ class SnakeGame(Game):
 			while self.screen.getKey() != "p":
 				pass
 
+		# Print out debug info
+		elif key.lower() == "d":
+			self.screen.print_debug()
+
 		# Only continue if we haven't lost yet
 		return not self.lost
 
 	# Eat callback
 	def eat(self, food):
 		# This SHOULD be this object, if it's not or score is None then something broke
-		if self.__class__.__name__ != "Game" or self.score is None:
-			raise ValueError("An invalid object was passed to the eat callback!")
+		#if self.__class__.__name__ != "Game" or self.score is None:
+		#	raise ValueError("An invalid object was passed to the eat callback!")
 
 		# We should grow and increase the score
 		self.snake.grow()
@@ -83,13 +88,17 @@ class SnakeGame(Game):
 		self.score += 1
 
 		# Take the food out of our list
-		self.food_list.pop()
+		# Errr...why isthis happening?
+		if len(self.food_list):
+			self.food_list.pop()
 
 	# Play the game (handle keyboard input and food)
 	def play(self):
 		self._addSnake()
 		to_continue = True
 		while to_continue:
+			if not len(self.food_list):
+				self.food_list.append(Food(game = self))
 			to_continue = Game.frame(self)
 
 	# You lose :'(
